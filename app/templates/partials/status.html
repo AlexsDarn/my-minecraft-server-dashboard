@@ -1,0 +1,24 @@
+{% if mc.online %}
+<div class="grid gap-3 sm:grid-cols-3">
+  <div class="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+    <p class="text-xs uppercase text-zinc-500">Contenedor</p>
+    <p class="text-lg font-semibold">{{ container.status }}</p>
+    <p class="text-xs text-zinc-500">{{ container.name }}</p>
+  </div>
+  <div class="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+    <p class="text-xs uppercase text-zinc-500">Minecraft</p>
+    <p class="text-lg font-semibold text-green-400">en línea · {{ mc.latency_ms }} ms</p>
+    <p class="text-xs text-zinc-500">{{ mc.version }}</p>
+  </div>
+  <div class="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+    <p class="text-xs uppercase text-zinc-500">Jugadores</p>
+    <p class="text-lg font-semibold">{{ mc.players_online }} / {{ mc.players_max }}</p>
+    <p class="text-xs text-zinc-500">{{ mc.motd }}</p>
+  </div>
+</div>
+{% else %}
+<div class="rounded-lg border border-red-900 bg-red-950 p-4">
+  <p class="font-semibold text-red-300">Servidor fuera de línea</p>
+  <p class="text-sm text-red-400/80">Contenedor: {{ container.status }} · {{ mc.error or "" }}</p>
+</div>
+{% endif %}

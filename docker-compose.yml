@@ -1,0 +1,27 @@
+# Dashboard del servidor Minecraft.
+# Despliegue: git clone <url> && cp -n .env.example .env && docker compose up -d --build
+services:
+  dashboard:
+    build: .
+    container_name: mc-dashboard
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      # Necesario: la app maneja el contenedor del MC vía Docker API
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Necesario: backup_service.py lee MC_DATA_DIR/MC_BACKUP_DIR del .env,
+      # así que cada dir del HOST se monta en la MISMA ruta dentro del contenedor
+      - ${MC_DATA_DIR:-/opt/minecraft/data}:${MC_DATA_DIR:-/opt/minecraft/data}:ro
+      - ${MC_BACKUP_DIR:-/opt/minecraft/backups}:${MC_BACKUP_DIR:-/opt/minecraft/backups}
+    # Si tu MC vive en una red docker dedicada, descomenta y usa
+    # el nombre del contenedor como MC_HOST en el .env:
+    # networks:
+    #   - mc-net
+
+# networks:
+#   mc-net:
+#     external: true
+#     name: <red-donde-vive-tu-minecraft>

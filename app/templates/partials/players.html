@@ -1,0 +1,12 @@
+{% if mc.online and mc.players %}
+<ul class="divide-y divide-zinc-800 rounded-lg border border-zinc-800 bg-zinc-900">
+  {% for p in mc.players %}
+  <li class="px-4 py-2 text-sm">{{ p.name }}</li>
+  {% endfor %}
+</ul>
+<p class="mt-2 text-xs text-zinc-500">{{ mc.players_online }} conectado(s) de {{ mc.players_max }}</p>
+{% elif mc.online %}
+<p class="text-sm text-zinc-500">Servidor en línea, nadie conectado.</p>
+{% else %}
+<p class="text-sm text-zinc-500">Sin datos de jugadores (servidor fuera de línea).</p>
+{% endif %}
