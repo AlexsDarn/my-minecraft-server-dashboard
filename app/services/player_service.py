@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import logging
 import re
 from pathlib import Path
 
@@ -51,6 +52,8 @@ DIMENSIONS = {
     "minecraft:the_nether": "Nether",
     "minecraft:the_end": "End",
 }
+
+log = logging.getLogger("mc-dashboard.players")
 
 
 def _roman(lvl: int) -> str:
@@ -125,9 +128,24 @@ def normalize_uuid(raw: str) -> str:
     return f"{h[0:8]}-{h[8:12]}-{h[12:16]}-{h[16:20]}-{h[20:32]}"
 
 
-def playerdata_path(uuid_dashed: str) -> Path:
-    # MC_DATA_DIR es la carpeta del mundo (contiene playerdata/).
-    return Path(config.MC_DATA_DIR) / "playerdata" / f"{uuid_dashed}.dat"
+def playerdata_path(uuid_dashed: str) -> Path | None:
+    """Localiza el .dat: directo en MC_DATA_DIR/playerdata o un nivel abajo
+    (algunos setups guardan el mundo en MC_DATA_DIR/world/)."""
+    base = Path(config.MC_DATA_DIR)
+    direct = base / "playerdata" / f"{uuid_dashed}.dat"
+    if direct.is_file():
+        return direct
+    nested = sorted(base.glob(f"*/playerdata/{uuid_dashed}.dat"))
+    if nested:
+        return nested[0]
+    # Diagnóstico (solo en docker logs, nunca en la web pública)
+    try:
+        contents = sorted(p.name for p in base.iterdir()) if base.is_dir() else ["<no existe>"]
+    except OSError as e:
+        contents = [f"<sin permiso: {e}>"]
+    log.warning("playerdata %s no encontrado. MC_DATA_DIR=%s contiene: %s",
+                uuid_dashed, base, contents[:15])
+    return None
 
 
 def parse_playerdata(root: dict) -> dict:
@@ -202,7 +220,7 @@ def get_player(name: str) -> dict:
     except ValueError:
         return {"ok": False, "error": "UUID inválido en el sample"}
     path = playerdata_path(uuid)
-    if not path.is_file():
+    if path is None:
         return {
             "ok": False,
             "error": "aún sin datos de este jugador (entra al mundo primero)",
