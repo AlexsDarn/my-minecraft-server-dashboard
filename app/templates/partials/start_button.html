@@ -1,0 +1,19 @@
+{% if state == "starting" %}
+<div class="mc-panel">
+  <p class="mc-value" style="color:#7cbd4b;">ARRANCANDO…</p>
+  <p class="mt-2 text-xl text-zinc-400">El server tarda ~1 min en estar jugable. Esta pagina se actualiza sola.</p>
+</div>
+{% elif state == "already" %}
+<div class="mc-panel">
+  <p class="text-xl text-zinc-400">Ya esta en marcha — actualiza en unos segundos.</p>
+</div>
+{% elif state == "cooldown" %}
+<div class="mc-panel">
+  <p class="text-xl text-zinc-400">Espera {{ wait }} s antes de intentarlo de nuevo.</p>
+</div>
+{% else %}
+<div class="mc-panel">
+  <p class="mc-value" style="color:#ff5555;">NO SE PUDO ARRANCAR</p>
+  <p class="mt-2 text-xl text-zinc-400">{{ detail or "error desconocido" }} — avisa al admin.</p>
+</div>
+{% endif %}

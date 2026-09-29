@@ -60,6 +60,8 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 ```
 
 - `GET /` → estado + jugadores (HTMX refresca cada 5/10 s)
+- Si el server está apagado, `/` muestra **Iniciar servidor** (público,
+  solo `docker start`, con cooldown de 60 s; stop/restart siguen en `/admin`)
 - Click en un jugador → ficha pública: vida, comida, XP, posición,
   armadura, inventario y ender chest (lee `playerdata/*.dat`, requiere
   `nbtlib`; `MC_DATA_DIR` debe ser la carpeta del mundo)

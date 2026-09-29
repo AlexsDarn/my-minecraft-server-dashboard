@@ -27,5 +27,21 @@
 <div class="mc-panel" style="box-shadow: inset 2px 2px 0 rgba(255,85,85,.35), inset -2px -2px 0 rgba(0,0,0,.55);">
   <p class="mc-value" style="color:#ff5555;">SERVIDOR FUERA DE LINEA</p>
   <p class="mt-2 text-lg text-zinc-400">Contenedor: {{ container.status }} · {{ mc.error or "" }}</p>
+  {% if container.status != "running" %}
+    {% if starting_recently %}
+  <div class="mt-3">
+    <div class="mc-panel">
+      <p class="mc-value" style="color:#7cbd4b;">ARRANCANDO…</p>
+      <p class="mt-2 text-xl text-zinc-400">El server tarda ~1 min en estar jugable. Esta pagina se actualiza sola.</p>
+    </div>
+  </div>
+    {% else %}
+  <div class="mt-3">
+    <button hx-post="/start" hx-target="#start-result" hx-swap="innerHTML"
+      class="mc-btn mc-btn-green">Iniciar servidor</button>
+  </div>
+    {% endif %}
+  {% endif %}
 </div>
+<div id="start-result" class="mt-3"></div>
 {% endif %}
