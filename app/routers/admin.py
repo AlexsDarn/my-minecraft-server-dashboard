@@ -29,12 +29,20 @@ def admin_action(action: str):
     return docker_service.container_action(action)
 
 
-@router.post("/admin/command")
-def admin_command(command: str = Form(...)):
-    command = command.strip()
-    if not command:
-        return {"ok": False, "error": "comando vacío"}
-    return docker_service.exec_rcon(command)
+@router.post("/admin/command", response_class=HTMLResponse)
+def admin_command(request: Request, command: str = Form("")):
+    # rcon-cli quiere el comando pelado: sin "/" inicial (ej: "say hola")
+    cmd = command.strip().lstrip("/")
+    if not cmd:
+        result = {
+            "ok": False,
+            "error": "comando vacío — prueba con: say hola · list · time set day",
+        }
+    else:
+        result = docker_service.exec_rcon(cmd)
+    return templates.TemplateResponse(
+        request, "partials/command_result.html", {"command": cmd, "result": result}
+    )
 
 
 @router.get("/admin/logs/stream")
@@ -69,8 +77,12 @@ async def admin_logs_stream():
                 for raw in stream:
                     if stop.is_set():
                         break
-                    text = raw.decode(errors="replace").rstrip()
-                    loop.call_soon_threadsafe(queue.put_nowait, text)
+                    text = docker_service.strip_ansi(
+                        raw.decode(errors="replace")
+                    )
+                    text = text.replace("\r\n", "\n").replace("\r", "\n")
+                    for line in text.split("\n"):
+                        loop.call_soon_threadsafe(queue.put_nowait, line.rstrip())
             except Exception as e:
                 loop.call_soon_threadsafe(
                     queue.put_nowait, f"[error stream: {e}]"

@@ -215,6 +215,9 @@ body.mc-bg {
   color: #7cbd4b;
   font-family: "VT323", monospace;
   font-size: 18px;
+  white-space: pre; /* líneas largas: scroll horizontal, nunca deforman el layout */
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 /* ---------- Varios ---------- */

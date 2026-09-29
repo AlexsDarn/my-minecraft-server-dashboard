@@ -11,12 +11,17 @@ from app.services import docker_service
 
 def backup_dir() -> Path:
     p = Path(config.MC_BACKUP_DIR)
-    p.mkdir(parents=True, exist_ok=True)
+    try:
+        p.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass  # sin permiso: list_backups devuelve [] y la página sigue viva
     return p
 
 
 def list_backups() -> list[dict]:
     d = backup_dir()
+    if not d.is_dir():
+        return []
     files = sorted(d.glob("*.tar.gz"), key=lambda f: f.stat().st_mtime, reverse=True)
     return [
         {

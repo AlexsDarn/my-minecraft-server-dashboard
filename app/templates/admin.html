@@ -11,19 +11,26 @@
 </div>
 
 <h3 class="mc-title mb-3 text-xs">COMANDO (RCON)</h3>
-<form hx-post="/admin/command" hx-swap="none" class="mb-6 flex flex-col gap-3 sm:flex-row">
+<p class="mb-2 text-xl text-zinc-400">Sin <span class="mc-code">/</span> inicial. Ejemplos: <span class="mc-code">say hola</span> <span class="mc-code">list</span> <span class="mc-code">time set day</span></p>
+<form hx-post="/admin/command" hx-target="#cmd-result" hx-swap="innerHTML" class="mb-3 flex flex-col gap-3 sm:flex-row">
   <input name="command" placeholder="say hola" autocomplete="off" class="mc-input flex-1" />
   <button class="mc-btn mc-btn-green">Enviar</button>
 </form>
+<div id="cmd-result" class="mb-6"></div>
 
 <h3 class="mc-title mb-3 text-xs">LOGS EN VIVO</h3>
-<pre id="logs" class="mc-log mb-6 h-64 overflow-y-auto p-3"></pre>
+<div class="mb-2 flex gap-3">
+  <button class="mc-btn" style="padding:8px 12px;" onclick="document.getElementById('logs').textContent=''">Limpiar</button>
+</div>
+<pre id="logs" class="mc-log mb-6 h-64 overflow-auto p-3"></pre>
 <script>
   const pre = document.getElementById("logs");
   const es = new EventSource("/admin/logs/stream");
   es.onmessage = (e) => {
+    // solo baja solo si ya estabas abajo (si subiste a leer, no te arrastra)
+    const nearBottom = pre.scrollHeight - pre.scrollTop - pre.clientHeight < 60;
     pre.textContent += e.data + "\n";
-    pre.scrollTop = pre.scrollHeight;
+    if (nearBottom) pre.scrollTop = pre.scrollHeight;
     const lines = pre.textContent.split("\n");
     if (lines.length > 500) pre.textContent = lines.slice(-500).join("\n");
   };

@@ -1,0 +1,8 @@
+<div class="mc-panel">
+  <p class="mc-label mb-2">&gt; {{ command or "(vacío)" }}</p>
+  {% if result.ok %}
+  <pre class="mc-log max-h-40 overflow-auto p-2">{{ result.output or "(sin salida — comando aceptado)" }}</pre>
+  {% else %}
+  <p class="text-xl" style="color:#ff5555;">{{ result.error or result.output or "error desconocido" }}</p>
+  {% endif %}
+</div>
