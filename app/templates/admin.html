@@ -11,9 +11,40 @@
 </div>
 
 <h3 class="mc-title mb-3 text-xs">COMANDO (RCON)</h3>
-<p class="mb-2 text-xl text-zinc-400">Sin <span class="mc-code">/</span> inicial. Ejemplos: <span class="mc-code">say hola</span> <span class="mc-code">list</span> <span class="mc-code">time set day</span></p>
+<p class="mb-2 text-xl text-zinc-400">Sin <span class="mc-code">/</span> inicial, o elige uno del menu y completalo. Ejemplos: <span class="mc-code">say hola</span> <span class="mc-code">list</span> <span class="mc-code">time set day</span></p>
+<div class="mb-2">
+  <select id="cmd-preset" class="mc-input w-full" onchange="if(this.value){document.getElementById('cmd-input').value=this.value;document.getElementById('cmd-input').focus();this.selectedIndex=0;}">
+    <option value="">-- menu de comandos --</option>
+    <optgroup label="Info">
+      <option value="list">list — jugadores conectados</option>
+      <option value="say ">say … — mensaje global</option>
+      <option value="msg  ">msg &lt;jugador&gt; … — mensaje privado</option>
+    </optgroup>
+    <optgroup label="Mundo">
+      <option value="time set day">time set day</option>
+      <option value="time set night">time set night</option>
+      <option value="weather clear">weather clear</option>
+      <option value="weather rain">weather rain</option>
+      <option value="difficulty normal">difficulty (peaceful/easy/normal/hard)</option>
+      <option value="save-all flush">save-all flush — guardar mundo</option>
+    </optgroup>
+    <optgroup label="Jugadores">
+      <option value="gamemode survival ">gamemode survival &lt;jugador&gt;</option>
+      <option value="gamemode creative ">gamemode creative &lt;jugador&gt;</option>
+      <option value="tp  ">tp &lt;jugador&gt; &lt;destino&gt;</option>
+      <option value="kick  ">kick &lt;jugador&gt;</option>
+      <option value="op ">op &lt;jugador&gt;</option>
+      <option value="deop ">deop &lt;jugador&gt;</option>
+      <option value="whitelist add ">whitelist add &lt;jugador&gt;</option>
+    </optgroup>
+    <optgroup label="Servidor">
+      <option value="save-all flush">save-all flush — guardar todo</option>
+      <option value="stop">stop — APAGAR el servidor</option>
+    </optgroup>
+  </select>
+</div>
 <form hx-post="/admin/command" hx-target="#cmd-result" hx-swap="innerHTML" class="mb-3 flex flex-col gap-3 sm:flex-row">
-  <input name="command" placeholder="say hola" autocomplete="off" class="mc-input flex-1" />
+  <input id="cmd-input" name="command" placeholder="say hola" autocomplete="off" class="mc-input flex-1" />
   <button class="mc-btn mc-btn-green">Enviar</button>
 </form>
 <div id="cmd-result" class="mb-6"></div>

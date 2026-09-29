@@ -8,7 +8,14 @@
 </div>
 
 <h2 class="mc-title mb-4 mt-8 text-sm sm:text-base">JUGADORES EN LINEA</h2>
+<p class="mb-3 text-xl text-zinc-400">Click en un jugador para ver su ficha (vida, comida, inventario).</p>
 <div hx-get="/partials/players" hx-trigger="load, every 10s" hx-swap="innerHTML">
   <div class="mc-panel"><p class="text-zinc-400">Buscando jugadores…</p></div>
+</div>
+<div id="player-modal"></div>
+
+<h2 class="mc-title mb-4 mt-8 text-sm sm:text-base">MODS DEL SERVIDOR</h2>
+<div hx-get="/partials/mods" hx-trigger="load, every 60s" hx-swap="innerHTML">
+  <div class="mc-panel"><p class="text-zinc-400">Leyendo lista de mods…</p></div>
 </div>
 {% endblock %}

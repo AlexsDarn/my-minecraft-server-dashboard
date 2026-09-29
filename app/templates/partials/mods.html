@@ -1,0 +1,13 @@
+{% if mc.online and mc.mods %}
+<p class="mb-3"><span class="mc-value" style="color:#7cbd4b;">{{ mc.mods|length }} MODS</span>
+  {% if mc.mods_truncated %}<span class="text-lg text-zinc-500">(lista truncada por el server)</span>{% endif %}</p>
+<div class="mc-log max-h-64 overflow-auto p-3">
+  {% for m in mc.mods %}
+  <p><span style="color:#ffffa0;">{{ m.id }}</span> <span class="text-zinc-500">{{ m.version }}</span></p>
+  {% endfor %}
+</div>
+{% elif mc.online %}
+<div class="mc-panel"><p class="text-zinc-400">El servidor no publica lista de mods (vanilla o sin query de mods). Si es Forge/NeoForge con mods, aparecerán aquí solos.</p></div>
+{% else %}
+<div class="mc-panel"><p class="text-zinc-400">Sin datos de mods (servidor fuera de línea).</p></div>
+{% endif %}

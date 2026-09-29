@@ -60,6 +60,9 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 ```
 
 - `GET /` → estado + jugadores (HTMX refresca cada 5/10 s)
+- Click en un jugador → ficha pública: vida, comida, XP, posición,
+  armadura, inventario y ender chest (lee `playerdata/*.dat`, requiere
+  `nbtlib`; `MC_DATA_DIR` debe ser la carpeta del mundo)
 - `GET /api/status` → JSON con estado del contenedor y del juego
 - `GET /admin` → panel admin (403 fuera de `ADMIN_ALLOW`)
 - `GET /admin/logs/stream` → logs en vivo (SSE)

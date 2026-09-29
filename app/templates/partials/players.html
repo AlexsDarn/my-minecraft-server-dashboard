@@ -1,10 +1,12 @@
 {% if mc.online and mc.players %}
 <div class="flex flex-col gap-2">
   {% for p in mc.players %}
-  <div class="mc-player-row">
+  <div class="mc-player-row" style="cursor:pointer;" title="Ver ficha de {{ p.name }}"
+       hx-get="/partials/player/{{ p.name }}" hx-target="#player-modal" hx-swap="innerHTML">
     <img class="mc-avatar" src="https://mc-heads.net/avatar/{{ p.name }}/28" alt="" loading="lazy"
          onerror="this.style.visibility='hidden'" />
     <span class="text-xl">{{ p.name }}</span>
+    <span class="ml-auto text-lg text-zinc-500">ver ficha &gt;</span>
   </div>
   {% endfor %}
 </div>

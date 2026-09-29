@@ -1,9 +1,11 @@
 """Rutas públicas (solo lectura): índice, parciales HTMX y API JSON."""
+import re
+
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from app.services import docker_service, status_service
+from app.services import docker_service, player_service, status_service
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -28,6 +30,29 @@ def partial_players(request: Request):
     mc = status_service.query_status()
     return templates.TemplateResponse(
         request, "partials/players.html", {"mc": mc}
+    )
+
+
+@router.get("/partials/mods", response_class=HTMLResponse)
+def partial_mods(request: Request):
+    mc = status_service.query_status()
+    return templates.TemplateResponse(
+        request, "partials/mods.html", {"mc": mc}
+    )
+
+
+@router.get("/partials/player/{name}", response_class=HTMLResponse)
+def partial_player(request: Request, name: str):
+    # Solo [A-Za-z0-9_], máx 16 (nicks de Minecraft): nada raro llega al fs
+    clean = re.sub(r"[^A-Za-z0-9_]", "", name)[:16]
+    if not clean:
+        return templates.TemplateResponse(
+            request,
+            "partials/player_modal.html",
+            {"p": {"ok": False, "error": "nombre inválido"}},
+        )
+    return templates.TemplateResponse(
+        request, "partials/player_modal.html", {"p": player_service.get_player(clean)}
     )
 
 

@@ -1,0 +1,79 @@
+{% macro slot(item, selected=False) -%}
+<div class="mc-slot{% if selected %} mc-slot-selected{% endif %}"
+  {%- if item %} title="{{ item.name }}{% if item.enchants %}&#10;{{ item.enchants|join('&#10;') }}{% endif %} (x{{ item.count }})"{% endif %}>
+  {%- if item %}
+  <span class="mc-slot-abbr">{{ item.abbr }}</span>
+  <img class="mc-slot-icon" loading="lazy" src="{{ item.icon }}" data-fallback="{{ item.icon_fallback }}" alt=""
+    onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback='';}else{this.style.display='none';}" />
+  {% if item.count > 1 %}<span class="mc-slot-count">{{ item.count }}</span>{% endif %}
+  {%- endif %}
+</div>
+{%- endmacro %}
+
+{% if p.ok %}
+<div class="mc-modal-overlay" onclick="if(event.target===this){document.getElementById('player-modal').innerHTML='';}">
+  <div class="mc-panel mc-modal">
+    <div class="mb-3 flex items-center gap-3">
+      <img class="mc-avatar" style="width:48px;height:48px;" src="https://mc-heads.net/avatar/{{ p.name }}/48" alt=""
+        loading="lazy" onerror="this.style.visibility='hidden'" />
+      <div class="flex-1">
+        <p class="mc-value">{{ p.name }}</p>
+        <p class="text-lg text-zinc-400">{{ p.dimension }} · ({{ p.pos[0] }}, {{ p.pos[1] }}, {{ p.pos[2] }}) · Nv {{ p.xp_level }}</p>
+      </div>
+      <button class="mc-btn mc-btn-red" style="padding:8px 12px;"
+        onclick="document.getElementById('player-modal').innerHTML=''">X</button>
+    </div>
+
+    <div class="mb-1 flex items-center gap-1" title="Vida: {{ p.health }}/{{ p.max_health }}">
+      {% for h in p.hearts %}
+      {% if h == 'full' %}<span class="mc-hp">♥</span>
+      {% elif h == 'half' %}<span class="mc-hp-half">♥</span>
+      {% else %}<span class="mc-hp off">♥</span>{% endif %}
+      {% endfor %}
+      <span class="ml-2 text-lg text-zinc-400">{{ p.health }}/{{ p.max_health }}</span>
+    </div>
+    <div class="mb-4 flex items-center gap-1" title="Comida: {{ p.food }}/20">
+      {% for h in p.hunger %}
+      {% if h == 'full' %}<span class="mc-hunger">🍗</span>
+      {% elif h == 'half' %}<span class="mc-hunger" style="opacity:.55;">🍗</span>
+      {% else %}<span class="mc-hunger off">🍗</span>{% endif %}
+      {% endfor %}
+      <span class="ml-2 text-lg text-zinc-400">{{ p.food }}/20</span>
+    </div>
+
+    <p class="mc-label mb-2">Armadura</p>
+    <div class="mb-4 flex gap-1">
+      {{ slot(p.armor.head) }}{{ slot(p.armor.chest) }}{{ slot(p.armor.legs) }}{{ slot(p.armor.feet) }}
+      <div style="width:8px;"></div>
+      {{ slot(p.armor.offhand) }}
+    </div>
+
+    <p class="mc-label mb-2">Inventario</p>
+    <div class="mc-inv-grid mb-1">
+      {% for item in p.storage %}{{ slot(item) }}{% endfor %}
+    </div>
+    <div class="mc-inv-grid mb-4">
+      {% for item in p.hotbar %}{{ slot(item, loop.index0 == p.selected) }}{% endfor %}
+    </div>
+
+    {% if p.ender %}
+    <details class="mb-3">
+      <summary class="mc-label mb-2" style="cursor:pointer;">Ender chest ({{ p.ender|length }})</summary>
+      <div class="mc-inv-grid">
+        {% for i in range(27) %}{{ slot(p.ender[i] if i < p.ender|length else None) }}{% endfor %}
+      </div>
+    </details>
+    {% endif %}
+
+    <p class="text-lg text-zinc-500">Datos del ultimo guardado: {{ p.updated }}</p>
+  </div>
+</div>
+{% else %}
+<div class="mc-modal-overlay" onclick="if(event.target===this){document.getElementById('player-modal').innerHTML='';}">
+  <div class="mc-panel mc-modal">
+    <p class="mc-value" style="color:#ff5555;">SIN FICHA</p>
+    <p class="mt-2 text-xl text-zinc-400">{{ p.error }}</p>
+    <button class="mc-btn mt-3" onclick="document.getElementById('player-modal').innerHTML=''">Cerrar</button>
+  </div>
+</div>
+{% endif %}

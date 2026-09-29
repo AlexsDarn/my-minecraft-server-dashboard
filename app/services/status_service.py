@@ -29,6 +29,18 @@ def query_status(
             {"name": _clean(p.name), "id": str(p.id)}
             for p in (status.players.sample or [])
         ]
+        mods: list[dict] = []
+        mods_truncated = False
+        forge = getattr(status, "forge_data", None)
+        if forge is not None:
+            try:
+                mods = [
+                    {"id": _clean(m.name), "version": _clean(m.marker)}
+                    for m in (forge.mods or [])
+                ]
+                mods_truncated = bool(getattr(forge, "truncated", False))
+            except Exception:
+                mods = []
         return {
             "online": True,
             "latency_ms": round(status.latency, 1),
@@ -37,6 +49,9 @@ def query_status(
             "players_online": status.players.online,
             "players_max": status.players.max,
             "players": players,
+            "is_modded": bool(getattr(status, "is_modded", bool(mods))),
+            "mods": sorted(mods, key=lambda m: m["id"].lower()),
+            "mods_truncated": mods_truncated,
         }
     except Exception as e:
         return {
@@ -47,5 +62,8 @@ def query_status(
             "players_online": 0,
             "players_max": 0,
             "players": [],
+            "is_modded": False,
+            "mods": [],
+            "mods_truncated": False,
             "error": str(e),
         }

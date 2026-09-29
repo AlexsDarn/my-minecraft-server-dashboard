@@ -3,5 +3,6 @@ uvicorn[standard]>=0.30
 jinja2>=3.1
 docker>=7.1
 mcstatus>=11
+nbtlib>=2.0
 python-dotenv>=1.0
 python-multipart>=0.0.18
