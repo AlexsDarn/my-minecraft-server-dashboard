@@ -228,13 +228,8 @@ def get_player(name: str) -> dict:
     try:
         import nbtlib
 
-        loaded = nbtlib.load(str(path))
-        # nbtlib 2.x: File es un dict {nombre_raíz: Compound}; el .dat de
-        # jugador usa nombre "". Se accede tolerante a versiones.
-        try:
-            root = loaded[""]
-        except KeyError:
-            root = next(iter(loaded.values()))
+        # File ES el Compound raíz (no hay que indexar [""]).
+        root = nbtlib.load(str(path))
         data = parse_playerdata(root)
         mtime = dt.datetime.fromtimestamp(path.stat().st_mtime)
         data.update(
