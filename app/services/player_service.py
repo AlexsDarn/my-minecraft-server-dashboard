@@ -228,7 +228,13 @@ def get_player(name: str) -> dict:
     try:
         import nbtlib
 
-        root = nbtlib.load(str(path))[""]
+        loaded = nbtlib.load(str(path))
+        # nbtlib 2.x: File es un dict {nombre_raíz: Compound}; el .dat de
+        # jugador usa nombre "". Se accede tolerante a versiones.
+        try:
+            root = loaded[""]
+        except KeyError:
+            root = next(iter(loaded.values()))
         data = parse_playerdata(root)
         mtime = dt.datetime.fromtimestamp(path.stat().st_mtime)
         data.update(
@@ -241,4 +247,5 @@ def get_player(name: str) -> dict:
         )
         return data
     except Exception as e:
+        log.exception("leyendo playerdata %s", path)
         return {"ok": False, "error": f"no se pudo leer su ficha: {e}"}
