@@ -17,7 +17,7 @@
   <header class="pt-6">
     <div class="relative mx-auto max-w-5xl px-4 text-center">
       <h1 class="mc-title text-xl sm:text-3xl">⛏️ MINECRAFT<br class="sm:hidden" /> DASHBOARD</h1>
-      <p id="splash" class="mc-splash absolute -top-1 right-2 text-[10px] sm:right-16 sm:text-xs">¡Hecho con FastAPI!</p>
+      <p id="splash" class="mc-splash absolute -top-1 right-2 text-[10px] sm:right-16 sm:text-xs">Hecho con FastAPI!</p>
     </div>
     <nav class="mx-auto mt-6 flex max-w-5xl flex-wrap justify-center gap-3 px-4">
       <a href="/" class="mc-btn">Estado</a>
@@ -35,11 +35,12 @@
 </div>
 <script>
   // Splash rotatorio estilo title screen
+  // Press Start 2P no trae tildes ni ¡!: splashes solo ASCII
   const splashes = [
-    "¡Hecho con FastAPI!", "¡100% libre de Herobrine!", "¡Punch trees!",
-    "¡Cuidado con los creepers!", "¡También prueba Terraria!",
-    "¡Ahora con HTMX!", "¡Sin lag!", "¡Diamantes para todos!",
-    "¡No caves hacia abajo!", "¡Aww man!"
+    "Hecho con FastAPI!", "100% libre de Herobrine!", "Punch trees!",
+    "Cuidado con los creepers!", "Tambien prueba Terraria!",
+    "Ahora con HTMX!", "Sin lag!", "Diamantes para todos!",
+    "No caves hacia abajo!", "Aww man!"
   ];
   const splashEl = document.getElementById("splash");
   let i = Math.floor(Math.random() * splashes.length);

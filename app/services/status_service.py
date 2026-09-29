@@ -1,7 +1,16 @@
 """Estado del servidor Minecraft vía mcstatus (query Java Edition)."""
 from __future__ import annotations
 
+import re
+
 from app import config
+
+# Códigos de formato del juego (§a, §l, §r...) que si no se ven crudos en la web
+FORMAT_RE = re.compile(r"§.")
+
+
+def _clean(text: object) -> str:
+    return FORMAT_RE.sub("", str(text)).strip()
 
 
 def query_status(
@@ -17,14 +26,14 @@ def query_status(
         server = JavaServer(host, port, timeout=timeout)
         status = server.status()
         players = [
-            {"name": p.name, "id": str(p.id)}
+            {"name": _clean(p.name), "id": str(p.id)}
             for p in (status.players.sample or [])
         ]
         return {
             "online": True,
             "latency_ms": round(status.latency, 1),
-            "version": status.version.name,
-            "motd": str(status.description),
+            "version": _clean(status.version.name),
+            "motd": _clean(status.description),
             "players_online": status.players.online,
             "players_max": status.players.max,
             "players": players,

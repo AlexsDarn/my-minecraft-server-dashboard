@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Admin — Minecraft Dashboard{% endblock %}
 {% block content %}
-<h2 class="mc-title mb-2 text-sm sm:text-base">ADMINISTRACIÓN</h2>
+<h2 class="mc-title mb-2 text-sm sm:text-base">ADMINISTRACION</h2>
 <p class="mb-4 text-xl text-zinc-400">Solo red local (<span class="mc-code">ADMIN_ALLOW</span> en .env). Con grandes poderes…</p>
 
 <div class="mb-6 flex flex-wrap gap-3">
-  <button hx-post="/admin/action/start" hx-swap="none" class="mc-btn mc-btn-green">▶ Start</button>
-  <button hx-post="/admin/action/stop" hx-swap="none" class="mc-btn mc-btn-red">■ Stop</button>
-  <button hx-post="/admin/action/restart" hx-swap="none" class="mc-btn mc-btn-gold">↻ Restart</button>
+  <button hx-post="/admin/action/start" hx-swap="none" class="mc-btn mc-btn-green">Start</button>
+  <button hx-post="/admin/action/stop" hx-swap="none" class="mc-btn mc-btn-red">Stop</button>
+  <button hx-post="/admin/action/restart" hx-swap="none" class="mc-btn mc-btn-gold">Restart</button>
 </div>
 
 <h3 class="mc-title mb-3 text-xs">COMANDO (RCON)</h3>
