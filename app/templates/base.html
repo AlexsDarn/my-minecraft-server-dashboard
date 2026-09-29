@@ -4,24 +4,68 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}Minecraft Dashboard{% endblock %}</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛏️</text></svg>" />
+  <link rel="icon" type="image/png" href="/static/img/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.4/dist/htmx.min.js"></script>
   <link rel="stylesheet" href="/static/css/output.css" />
 </head>
-<body class="min-h-screen bg-zinc-950 text-zinc-100">
-  <header class="border-b border-zinc-800">
-    <nav class="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-      <a href="/" class="font-bold tracking-tight">⛏️ Minecraft Dashboard</a>
-      <div class="flex gap-4 text-sm text-zinc-400">
-        <a href="/" class="hover:text-zinc-100">Estado</a>
-        <a href="/admin" class="hover:text-zinc-100">Admin</a>
-        <a href="/api/status" class="hover:text-zinc-100">API</a>
-      </div>
+<body class="mc-bg">
+<div class="mc-veil">
+  <header class="pt-6">
+    <div class="relative mx-auto max-w-5xl px-4 text-center">
+      <h1 class="mc-title text-xl sm:text-3xl">⛏️ MINECRAFT<br class="sm:hidden" /> DASHBOARD</h1>
+      <p id="splash" class="mc-splash absolute -top-1 right-2 text-[10px] sm:right-16 sm:text-xs">¡Hecho con FastAPI!</p>
+    </div>
+    <nav class="mx-auto mt-6 flex max-w-5xl flex-wrap justify-center gap-3 px-4">
+      <a href="/" class="mc-btn">Estado</a>
+      <a href="/admin" class="mc-btn">Admin</a>
+      <a href="/api/status" class="mc-btn">API</a>
     </nav>
+    <div class="mc-grass-strip mt-6"></div>
   </header>
   <main class="mx-auto max-w-5xl px-4 py-6">
     {% block content %}{% endblock %}
   </main>
+  <footer class="mx-auto max-w-5xl px-4 pb-8 text-center text-lg text-zinc-400">
+    <p>¿Un creeper? ¡Aww man! · Solo lectura aquí — el TNT está en <a class="mc-link" href="/admin">/admin</a></p>
+  </footer>
+</div>
+<script>
+  // Splash rotatorio estilo title screen
+  const splashes = [
+    "¡Hecho con FastAPI!", "¡100% libre de Herobrine!", "¡Punch trees!",
+    "¡Cuidado con los creepers!", "¡También prueba Terraria!",
+    "¡Ahora con HTMX!", "¡Sin lag!", "¡Diamantes para todos!",
+    "¡No caves hacia abajo!", "¡Aww man!"
+  ];
+  const splashEl = document.getElementById("splash");
+  let i = Math.floor(Math.random() * splashes.length);
+  const showSplash = () => { splashEl.textContent = splashes[i % splashes.length]; i++; };
+  showSplash();
+  setInterval(showSplash, 4000);
+
+  // Click estilo juego en los botones
+  function mcClick() {
+    try {
+      const C = window.__mcAudio || (window.__mcAudio = new (window.AudioContext || window.webkitAudioContext)());
+      if (C.state === "suspended") C.resume();
+      const o = C.createOscillator(), g = C.createGain();
+      o.type = "square";
+      o.frequency.setValueAtTime(600, C.currentTime);
+      o.frequency.exponentialRampToValueAtTime(180, C.currentTime + 0.08);
+      g.gain.setValueAtTime(0.05, C.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, C.currentTime + 0.09);
+      o.connect(g).connect(C.destination);
+      o.start();
+      o.stop(C.currentTime + 0.1);
+    } catch (e) { /* sin audio no pasa nada */ }
+  }
+  document.addEventListener("click", (e) => {
+    if (e.target.closest(".mc-btn")) mcClick();
+  });
+</script>
 </body>
 </html>

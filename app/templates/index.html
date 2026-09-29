@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Estado — Minecraft Dashboard{% endblock %}
 {% block content %}
-<h1 class="mb-4 text-2xl font-bold">Estado del servidor</h1>
+<h2 class="mc-title mb-4 text-sm sm:text-base">ESTADO DEL SERVIDOR</h2>
 
 <div hx-get="/partials/status" hx-trigger="load, every 5s" hx-swap="innerHTML">
-  <p class="text-zinc-500">Cargando…</p>
+  <div class="mc-panel"><p class="text-zinc-400">Cargando chunks…</p></div>
 </div>
 
-<h2 class="mb-2 mt-8 text-xl font-semibold">Jugadores</h2>
+<h2 class="mc-title mb-4 mt-8 text-sm sm:text-base">JUGADORES EN LÍNEA</h2>
 <div hx-get="/partials/players" hx-trigger="load, every 10s" hx-swap="innerHTML">
-  <p class="text-zinc-500">Cargando…</p>
+  <div class="mc-panel"><p class="text-zinc-400">Buscando jugadores…</p></div>
 </div>
 {% endblock %}

@@ -1,12 +1,16 @@
 {% if mc.online and mc.players %}
-<ul class="divide-y divide-zinc-800 rounded-lg border border-zinc-800 bg-zinc-900">
+<div class="flex flex-col gap-2">
   {% for p in mc.players %}
-  <li class="px-4 py-2 text-sm">{{ p.name }}</li>
+  <div class="mc-player-row">
+    <img class="mc-avatar" src="https://mc-heads.net/avatar/{{ p.name }}/28" alt="" loading="lazy"
+         onerror="this.style.visibility='hidden'" />
+    <span class="text-xl">{{ p.name }}</span>
+  </div>
   {% endfor %}
-</ul>
-<p class="mt-2 text-xs text-zinc-500">{{ mc.players_online }} conectado(s) de {{ mc.players_max }}</p>
+</div>
+<p class="mt-3 text-lg text-zinc-400">{{ mc.players_online }} conectado(s) de {{ mc.players_max }}</p>
 {% elif mc.online %}
-<p class="text-sm text-zinc-500">Servidor en línea, nadie conectado.</p>
+<div class="mc-panel"><p class="text-zinc-400">Servidor en línea, nadie conectado. Los aldeanos te juzgan en silencio.</p></div>
 {% else %}
-<p class="text-sm text-zinc-500">Sin datos de jugadores (servidor fuera de línea).</p>
+<div class="mc-panel"><p class="text-zinc-400">Sin datos de jugadores (servidor fuera de línea).</p></div>
 {% endif %}

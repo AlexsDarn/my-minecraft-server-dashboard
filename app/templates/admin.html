@@ -1,52 +1,46 @@
 {% extends "base.html" %}
 {% block title %}Admin — Minecraft Dashboard{% endblock %}
 {% block content %}
-<h1 class="mb-4 text-2xl font-bold">Administración</h1>
-<p class="mb-4 text-sm text-zinc-500">Solo accesible desde la red local (ver <code>ADMIN_ALLOW</code> en .env).</p>
+<h2 class="mc-title mb-2 text-sm sm:text-base">ADMINISTRACIÓN</h2>
+<p class="mb-4 text-xl text-zinc-400">Solo red local (<span class="mc-code">ADMIN_ALLOW</span> en .env). Con grandes poderes…</p>
 
-<div class="mb-6 flex flex-wrap gap-2">
-  <button hx-post="/admin/action/start" hx-swap="none"
-    class="rounded bg-green-700 px-4 py-2 text-sm font-semibold hover:bg-green-600">Start</button>
-  <button hx-post="/admin/action/stop" hx-swap="none"
-    class="rounded bg-red-700 px-4 py-2 text-sm font-semibold hover:bg-red-600">Stop</button>
-  <button hx-post="/admin/action/restart" hx-swap="none"
-    class="rounded bg-amber-700 px-4 py-2 text-sm font-semibold hover:bg-amber-600">Restart</button>
+<div class="mb-6 flex flex-wrap gap-3">
+  <button hx-post="/admin/action/start" hx-swap="none" class="mc-btn mc-btn-green">▶ Start</button>
+  <button hx-post="/admin/action/stop" hx-swap="none" class="mc-btn mc-btn-red">■ Stop</button>
+  <button hx-post="/admin/action/restart" hx-swap="none" class="mc-btn mc-btn-gold">↻ Restart</button>
 </div>
 
-<h2 class="mb-2 text-lg font-semibold">Comando (RCON dentro del contenedor)</h2>
-<form hx-post="/admin/command" hx-swap="none" class="mb-6 flex gap-2">
-  <input name="command" placeholder='say hola' autocomplete="off"
-    class="flex-1 rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm" />
-  <button class="rounded bg-zinc-100 px-4 py-2 text-sm font-semibold text-zinc-900">Enviar</button>
+<h3 class="mc-title mb-3 text-xs">COMANDO (RCON)</h3>
+<form hx-post="/admin/command" hx-swap="none" class="mb-6 flex flex-col gap-3 sm:flex-row">
+  <input name="command" placeholder="say hola" autocomplete="off" class="mc-input flex-1" />
+  <button class="mc-btn mc-btn-green">Enviar</button>
 </form>
 
-<h2 class="mb-2 text-lg font-semibold">Logs en vivo</h2>
-<pre id="logs" class="mb-6 h-64 overflow-y-auto rounded-lg border border-zinc-800 bg-black p-3 text-xs text-green-300"></pre>
+<h3 class="mc-title mb-3 text-xs">LOGS EN VIVO</h3>
+<pre id="logs" class="mc-log mb-6 h-64 overflow-y-auto p-3"></pre>
 <script>
   const pre = document.getElementById("logs");
   const es = new EventSource("/admin/logs/stream");
   es.onmessage = (e) => {
     pre.textContent += e.data + "\n";
     pre.scrollTop = pre.scrollHeight;
-    // evita crecimiento infinito del DOM
     const lines = pre.textContent.split("\n");
     if (lines.length > 500) pre.textContent = lines.slice(-500).join("\n");
   };
 </script>
 
-<h2 class="mb-2 text-lg font-semibold">Backups</h2>
-<div class="mb-2">
-  <button hx-post="/admin/backup" hx-swap="none"
-    class="rounded bg-sky-700 px-4 py-2 text-sm font-semibold hover:bg-sky-600">Crear backup ahora</button>
+<h3 class="mc-title mb-3 text-xs">BACKUPS</h3>
+<div class="mb-3">
+  <button hx-post="/admin/backup" hx-swap="none" class="mc-btn">Crear backup ahora</button>
 </div>
-<ul class="divide-y divide-zinc-800 rounded-lg border border-zinc-800 bg-zinc-900">
+<div class="flex flex-col gap-2">
   {% for b in backups %}
-  <li class="flex items-center justify-between px-4 py-2 text-sm">
-    <span>{{ b.name }} <span class="text-zinc-500">· {{ b.size_mb }} MB · {{ b.modified }}</span></span>
-    <a href="/admin/backups/download/{{ b.name }}" class="text-sky-400 hover:underline">descargar</a>
-  </li>
+  <div class="mc-player-row justify-between">
+    <span class="text-xl">{{ b.name }} <span class="text-zinc-500">· {{ b.size_mb }} MB · {{ b.modified }}</span></span>
+    <a href="/admin/backups/download/{{ b.name }}" class="mc-btn" style="padding:8px 12px;">Descargar</a>
+  </div>
   {% else %}
-  <li class="px-4 py-2 text-sm text-zinc-500">Aún no hay backups.</li>
+  <div class="mc-panel"><p class="text-zinc-400">Aún no hay backups. El dragón sigue suelto.</p></div>
   {% endfor %}
-</ul>
+</div>
 {% endblock %}

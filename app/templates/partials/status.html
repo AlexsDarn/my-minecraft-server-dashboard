@@ -1,24 +1,31 @@
 {% if mc.online %}
+<div class="mb-4 flex items-center gap-3">
+  <span class="mc-xp-level text-sm">{{ mc.players_online }}</span>
+  <div class="mc-xp flex-1">
+    <div class="mc-xp-fill" style="width: {% if mc.players_max %}{{ (mc.players_online * 100 // mc.players_max) }}{% else %}0{% endif %}%;"></div>
+  </div>
+  <span class="mc-label">{{ mc.players_online }} / {{ mc.players_max }}</span>
+</div>
 <div class="grid gap-3 sm:grid-cols-3">
-  <div class="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
-    <p class="text-xs uppercase text-zinc-500">Contenedor</p>
-    <p class="text-lg font-semibold">{{ container.status }}</p>
-    <p class="text-xs text-zinc-500">{{ container.name }}</p>
+  <div class="mc-panel">
+    <p class="mc-label mb-2">Contenedor</p>
+    <p class="mc-value">{{ container.status }}</p>
+    <p class="mt-1 text-lg text-zinc-400">{{ container.name }}</p>
   </div>
-  <div class="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
-    <p class="text-xs uppercase text-zinc-500">Minecraft</p>
-    <p class="text-lg font-semibold text-green-400">en línea · {{ mc.latency_ms }} ms</p>
-    <p class="text-xs text-zinc-500">{{ mc.version }}</p>
+  <div class="mc-panel">
+    <p class="mc-label mb-2">Minecraft</p>
+    <p class="mc-value" style="color:#7cbd4b;">EN LÍNEA · {{ mc.latency_ms }} ms</p>
+    <p class="mt-1 text-lg text-zinc-400">{{ mc.version }}</p>
   </div>
-  <div class="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
-    <p class="text-xs uppercase text-zinc-500">Jugadores</p>
-    <p class="text-lg font-semibold">{{ mc.players_online }} / {{ mc.players_max }}</p>
-    <p class="text-xs text-zinc-500">{{ mc.motd }}</p>
+  <div class="mc-panel">
+    <p class="mc-label mb-2">Jugadores</p>
+    <p class="mc-value">{{ mc.players_online }} / {{ mc.players_max }}</p>
+    <p class="mt-1 text-lg text-zinc-400">{{ mc.motd }}</p>
   </div>
 </div>
 {% else %}
-<div class="rounded-lg border border-red-900 bg-red-950 p-4">
-  <p class="font-semibold text-red-300">Servidor fuera de línea</p>
-  <p class="text-sm text-red-400/80">Contenedor: {{ container.status }} · {{ mc.error or "" }}</p>
+<div class="mc-panel" style="box-shadow: inset 2px 2px 0 rgba(255,85,85,.35), inset -2px -2px 0 rgba(0,0,0,.55);">
+  <p class="mc-value" style="color:#ff5555;">SERVIDOR FUERA DE LÍNEA</p>
+  <p class="mt-2 text-lg text-zinc-400">Contenedor: {{ container.status }} · {{ mc.error or "" }}</p>
 </div>
 {% endif %}
