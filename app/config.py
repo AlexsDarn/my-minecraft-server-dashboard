@@ -13,6 +13,7 @@ def _get(name: str, default: str) -> str:
 MC_CONTAINER: str = _get("MC_CONTAINER", "maincra2")
 MC_HOST: str = _get("MC_HOST", "localhost")
 MC_PORT: int = int(_get("MC_PORT", "25565"))
+MC_TIMEOUT: float = float(_get("MC_TIMEOUT", "2"))
 MC_DATA_DIR: str = _get("MC_DATA_DIR", "/opt/minecraft/data")
 MC_BACKUP_DIR: str = _get("MC_BACKUP_DIR", "/opt/minecraft/backups")
 RCON_CMD: str = _get("RCON_CMD", "rcon-cli")

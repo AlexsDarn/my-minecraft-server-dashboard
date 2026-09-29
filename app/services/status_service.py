@@ -5,15 +5,16 @@ from app import config
 
 
 def query_status(
-    host: str | None = None, port: int | None = None
+    host: str | None = None, port: int | None = None, timeout: float | None = None
 ) -> dict:
     """Nunca lanza excepción; devuelve dict serializable."""
     host = host or config.MC_HOST
     port = port or config.MC_PORT
+    timeout = timeout if timeout is not None else config.MC_TIMEOUT
     try:
         from mcstatus import JavaServer
 
-        server = JavaServer(host, port)
+        server = JavaServer(host, port, timeout=timeout)
         status = server.status()
         players = [
             {"name": p.name, "id": str(p.id)}

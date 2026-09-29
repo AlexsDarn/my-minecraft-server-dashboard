@@ -1,5 +1,6 @@
 """Rutas admin protegidas por IP (ver deps.require_admin)."""
 import asyncio
+import threading
 from pathlib import Path
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Form, Request
@@ -38,28 +39,57 @@ def admin_command(command: str = Form(...)):
 
 @router.get("/admin/logs/stream")
 async def admin_logs_stream():
-    """SSE: emite las últimas líneas y luego sigue el log en vivo."""
+    """SSE: emite las últimas líneas y luego sigue el log en vivo.
+
+    El iterador de docker-py es bloqueante, así que se bombea desde
+    un hilo hacia una cola (nunca en el event loop: lo congelaría
+    y ningún otro request respondería).
+    """
 
     async def gen():
         # 1) histórico (sync -> threadpool vía to_thread)
         lines = await asyncio.to_thread(docker_service.log_lines, 100)
         for line in lines:
             yield f"data: {line}\n\n"
-        # 2) seguimiento en vivo
-        try:
-            import docker
+        # Si el stream se corta, el navegador reintenta cada 10 s (no cada 3 s)
+        yield "retry: 10000\n\n"
 
-            client = docker.from_env()
-            container = client.containers.get(config.MC_CONTAINER)
-            stream = container.logs(stream=True, follow=True, tail=0)
-            for raw in stream:
-                text = raw.decode(errors="replace").rstrip()
-                yield f"data: {text}\n\n"
-                await asyncio.sleep(0)
+        # 2) seguimiento en vivo, bombeado desde un hilo
+        loop = asyncio.get_running_loop()
+        queue: asyncio.Queue = asyncio.Queue()
+        stop = threading.Event()
+
+        def pump():
+            try:
+                import docker
+
+                client = docker.from_env()
+                container = client.containers.get(config.MC_CONTAINER)
+                stream = container.logs(stream=True, follow=True, tail=0)
+                for raw in stream:
+                    if stop.is_set():
+                        break
+                    text = raw.decode(errors="replace").rstrip()
+                    loop.call_soon_threadsafe(queue.put_nowait, text)
+            except Exception as e:
+                loop.call_soon_threadsafe(
+                    queue.put_nowait, f"[error stream: {e}]"
+                )
+            finally:
+                loop.call_soon_threadsafe(queue.put_nowait, None)
+
+        thread = threading.Thread(target=pump, daemon=True)
+        thread.start()
+        try:
+            while True:
+                item = await queue.get()
+                if item is None:
+                    break
+                yield f"data: {item}\n\n"
         except asyncio.CancelledError:
             return
-        except Exception as e:
-            yield f"data: [error stream: {e}]\n\n"
+        finally:
+            stop.set()
 
     return StreamingResponse(gen(), media_type="text/event-stream")
 

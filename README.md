@@ -45,7 +45,7 @@ Notas:
 - `MC_HOST=localhost` **no** funciona desde dentro del contenedor.
   Usa la IP LAN del host o pon el dashboard en la misma red docker
   del Minecraft y usa el nombre del contenedor como `MC_HOST`
-  (ver bloque `networks` comentado en `docker-compose.yml`).
+  (ver bloque `networks` comentado en `docker-compose.yml`). o usar `ip route get 1.1.1.1 | awk '{for(i=1;i<=NF;i++) if($i=="src") print $(i+1)}'`
 - El socket `/var/run/docker.sock` montado le da a la app control
   sobre el contenedor del MC (equivalente a estar en el grupo `docker`).
 - Con puertos publicados, la app sigue viendo la IP real del cliente,
