@@ -3,8 +3,8 @@
   {%- if item %} title="{{ item.name }}{% if item.enchants %}&#10;{{ item.enchants|join('&#10;') }}{% endif %} (x{{ item.count }})"{% endif %}>
   {%- if item %}
   <span class="mc-slot-abbr">{{ item.abbr }}</span>
-  <img class="mc-slot-icon" loading="lazy" src="{{ item.icon }}" data-fallback="{{ item.icon_fallback }}" alt=""
-    onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback='';}else{this.style.display='none';}" />
+  <img class="mc-slot-icon" loading="lazy" src="{{ item.icons[0] }}" data-icons='{{ item.icons|tojson }}' data-i="0" alt=""
+    onerror="mcIconNext(this)" />
   {% if item.count > 1 %}<span class="mc-slot-count">{{ item.count }}</span>{% endif %}
   {%- endif %}
 </div>

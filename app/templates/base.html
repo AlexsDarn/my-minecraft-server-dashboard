@@ -67,6 +67,20 @@
   document.addEventListener("click", (e) => {
     if (e.target.closest(".mc-btn")) mcClick();
   });
+
+  // Iconos de items: recorre la cadena de candidatos hasta que uno cargue
+  function mcIconNext(img) {
+    try {
+      const list = JSON.parse(img.dataset.icons || "[]");
+      const i = parseInt(img.dataset.i || "0", 10) + 1;
+      if (i < list.length) {
+        img.dataset.i = String(i);
+        img.src = list[i];
+        return;
+      }
+    } catch (e) { /* sigue al fallback final */ }
+    img.style.display = "none"; // queda la abreviatura en texto
+  }
 </script>
 </body>
 </html>

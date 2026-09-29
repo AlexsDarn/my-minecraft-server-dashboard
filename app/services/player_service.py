@@ -60,6 +60,34 @@ def _roman(lvl: int) -> str:
     return ROMAN[lvl - 1] if 1 <= lvl <= 10 else str(lvl)
 
 
+def icon_candidates(short: str) -> list[str]:
+    """Cadena items/ -> blocks/ -> variantes base.
+
+    blocks/ solo trae cubos completos (no slabs/stairs ni modelos
+    complejos como furnace): para X_slab/X_stairs se prueba X_planks
+    y luego el tallo. Si nada existe, el slot muestra la abreviatura.
+    """
+    cands = [
+        f"{ICON_BASE}/items/{short}.png",
+        f"{ICON_BASE}/blocks/{short}.png",
+    ]
+    if "_" in short:
+        stem, _, suffix = short.rpartition("_")
+        if suffix in ("slab", "stairs"):
+            cands.append(f"{ICON_BASE}/blocks/{stem}_planks.png")
+        if suffix in (
+            "slab", "stairs", "wall", "fence", "gate", "door",
+            "trapdoor", "button", "plate", "sign",
+        ):
+            cands.append(f"{ICON_BASE}/blocks/{stem}.png")
+    seen, out = set(), []
+    for c in cands:
+        if c not in seen:
+            seen.add(c)
+            out.append(c)
+    return out
+
+
 def pretty_id(item_id: str) -> str:
     """minecraft:diamond_sword -> Diamond Sword."""
     parts = item_id.split(":", 1)
@@ -109,8 +137,7 @@ def parse_item(entry: dict) -> dict:
         "count": int(entry.get("Count", 1)),
         "name": _display_name(tag, item_id),
         "enchants": enchants,
-        "icon": f"{ICON_BASE}/items/{short}.png",
-        "icon_fallback": f"{ICON_BASE}/blocks/{short}.png",
+        "icons": icon_candidates(short),
     }
 
 
